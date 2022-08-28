@@ -283,6 +283,10 @@ function loadJson(){
   readTextFile("3by3s/test.json", function(text){
       var data = JSON.parse(text);
       console.log(data);
+
+      listOfcellsData[0] = data[0];
+      console.log(listOfcellsData[0]);
+
   });
 }
 
