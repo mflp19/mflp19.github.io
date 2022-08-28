@@ -193,15 +193,15 @@ let cellList = document.getElementsByClassName('cell');
 let overlays = document.getElementsByClassName('overlay');
 
 var listOfcellsData = [
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
-    { link: "", videoID: "", thumpnail: "" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"" },
     { link: "https://www.youtube.com/watch?v=lqBs1P8afTU", videoID: "lqBs1P8afTU", thumpnail: "https://img.youtube.com/vi/lqBs1P8afTU/mqdefault.jpg", embed:"https://www.youtube.com/embed?v=lqBs1P8afTU"},
 ];
 
@@ -283,10 +283,11 @@ function loadJson(){
   readTextFile("3by3s/test.json", function(text){
       var data = JSON.parse(text);
       console.log(data);
+      
+      
+      cellList[0].style.backgroundImage = "url("+data[0].thumbnail+")";
 
-      for (let i = 0; i < 10; i++) {
-        cellList[i].style.backgroundImage = "url("+data[i].thumbnail+")";
-      }
+
   });
 }
 
