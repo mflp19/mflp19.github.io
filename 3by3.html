@@ -284,9 +284,9 @@ function loadJson(){
       var data = JSON.parse(text);
       console.log(data);
 
-      listOfcellsData[0] = data[0];
-      console.log(listOfcellsData[0]);
-
+      for (let i = 0; i < 10; i++) {
+        cellList[i].style.backgroundImage = "url("+data[i].thumbnail+")";
+      }
   });
 }
 
