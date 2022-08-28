@@ -286,6 +286,11 @@ function loadJson(){
       
       listOfcellsData = data;
 
+
+      for (let i = 0; i < listOfcellsData.length; i++) {
+        cellList[i].style.backgroundImage = "url("+listOfcellsData[i].thumpnail+")";
+      }
+
   });
 }
 
