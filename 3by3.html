@@ -66,6 +66,13 @@ body, html {
     margin-top: 35%;
 }
 
+.textarea {
+  width: 100%;
+  overflow: hidden;
+  resize: vertical;
+  min-height: 130px;
+  line-height: 20px;
+}
 
 .edit {
 }
@@ -78,7 +85,8 @@ body, html {
 <div class="w3-top" style="position:relative">
   <div class="w3-row w3-padding w3-black">
     <div class="w3-col s6">
-      <a class="w3-button w3-block w3-black" onclick="loadJson();">OPEN</a>
+      <label for="file-selector" class="w3-button w3-block w3-black">OPEN</label>
+      <input type="file" id="file-selector" accept=".json" hidden>
     </div>
     <div class="w3-col s6">
       <a class="w3-button w3-block w3-black" onclick="exportJson(this);">SAVE</a>
@@ -153,7 +161,9 @@ body, html {
 
 <!-- About Container -->
 <div class="w3-container" id="about">
-  <div class="w3-content" style="max-width:700px">
+  <div class="w3-content" style="padding-top: 1%; max-width:700px; text-align: center; font-style: italic;">
+    <textarea class="textarea" id="messageBoxInput" style="display: none;"></textarea></p>
+    <p id="messageBox" style="display: block;"></p>
     <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Video</span></h5>
     <!-- put YT here -->
     <iframe id="YT" width="640" height="360"
@@ -173,35 +183,23 @@ body, html {
 </footer>
 
 <script>
-// Tabbed Menu
-function openMenu(evt, menuName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("menu");
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < x.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" w3-dark-grey", "");
-  }
-  document.getElementById(menuName).style.display = "block";
-  evt.currentTarget.firstElementChild.className += " w3-dark-grey";
-}
 
 let buttonList = document.getElementsByClassName('edit');
 let cellList = document.getElementsByClassName('cell');
 let overlays = document.getElementsByClassName('overlay');
+const messageBoxSelector = document.getElementById('messageBoxInput');
+let selectedBox = 0
 
 var listOfcellsData = [
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
-    { link: "", videoID: "", thumpnail: "", embed:"" },
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
+    { link: "", videoID: "", thumpnail: "", embed:"", message:""},
     { link: "https://www.youtube.com/watch?v=lqBs1P8afTU", videoID: "lqBs1P8afTU", thumpnail: "https://img.youtube.com/vi/lqBs1P8afTU/mqdefault.jpg", embed:"https://www.youtube.com/embed?v=lqBs1P8afTU"},
 ];
 
@@ -224,11 +222,21 @@ Array.prototype.forEach.call(overlays, function(o) {
     o.style.display = 'none'
   }
 });
+  if (document.getElementById("messageBoxInput").style.display === 'none') {
+    document.getElementById("messageBoxInput").style.display = 'block'
+    document.getElementById("messageBox").style.display = 'none'
+
+    } else {
+      document.getElementById("messageBoxInput").style.display = 'none'
+      document.getElementById("messageBox").style.display = 'block'
+    }
 
 }
 
 function edit(num) {
-  let link = prompt("Please enter youtube link:", "https://www.youtube.com/watch?v=lqBs1P8afTU");
+  selectedBox = num;
+  messageBoxSelector.value = listOfcellsData[num].message;
+  let link = prompt("Please enter youtube link:", listOfcellsData[num].link);
   let thumbnail;
   let videoID = extractVideoIdFromYouTubeUrl(link)
   let embed;
@@ -253,46 +261,42 @@ function extractVideoIdFromYouTubeUrl (url) {
   return stepOne;
 }
 
+
 function changeVideo(num){
   console.log(num)
   document.getElementById('YT').src = listOfcellsData[num].embed;
+  selectedBox = num;
+  document.getElementById("messageBox").innerText = "\""+listOfcellsData[num].message+"\"";
+  messageBoxSelector.value = listOfcellsData[num].message;
+
 }
 
 function exportJson(el) {
   var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(listOfcellsData));
   // what to return in order to show download window?
   el.setAttribute("href", "data:"+data);
-  el.setAttribute("download", "data.json");    
+  el.setAttribute("download", "My3by3.json");    
 }
 
-
-function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
-        }
-    }
-    rawFile.send(null);
-}
-
-function loadJson(){
-  //usage:
-  readTextFile("3by3s/test.json", function(text){
-      var data = JSON.parse(text);
-      console.log(data);
-      
-      listOfcellsData = data;
-
-
-      for (let i = 0; i < listOfcellsData.length; i++) {
+const fileSelector = document.getElementById('file-selector');
+  fileSelector.addEventListener('change', (event) => {
+    const fileList = event.target.files;
+      new Response(fileList[0]).json().then(json => {
+        listOfcellsData = json;
+        for (let i = 0; i < listOfcellsData.length; i++) {
         cellList[i].style.backgroundImage = "url("+listOfcellsData[i].thumpnail+")";
       }
-
+        console.log(json);
+      }, err => {
+        // not json
+      })
   });
-}
+
+  messageBoxSelector.addEventListener('change', (event) => {
+    console.log(messageBoxSelector.value)
+    listOfcellsData[selectedBox].message = messageBoxSelector.value
+  });
+
 
 </script>
 
