@@ -23,6 +23,15 @@ body, html {
         display: flex;
         justify-content: center;
 }
+.top {
+  background-position: center;
+  background-size: cover;
+  min-height: 8%;
+  justify-content: center;
+        height: 10px;
+        display: flex;
+}
+
 
 .menu {
   display: none;
@@ -36,6 +45,7 @@ body, html {
   position: relative;
   min-height: 75%;
   padding-top: 30px;
+  border-style: solid;
 }
 .cell {                     /* don't grow, don't shrink, width */
   margin-bottom: 5px;
@@ -95,7 +105,19 @@ body, html {
 </div>
 
 <!-- Header with image -->
+<header class="top">
+  <div style="position:absolute;">
+    <h5 id="themeBox" class="w3-center" style="display:block; margin:1px 0px 0px 0px;" ><span class="w3-tag w3-wide" style="padding-left: 100px; padding-right: 100px;">Theme</span></h5>
+    <input type="text" id="themeBoxInput" name="fname" placeholder="Theme" style="display:none">
+    <h5 id="nameBox" class="w3-center" style="display:block; margin:0px 0px 0px 0px;"><span class="w3-wide" style="font-family:Trattatello, fantasy ;">Name</span></h5>
+    <input type="text" id="nameBoxInput" name="fname" placeholder="Name" style="display:none">
+  </div>
+</header>
+
 <header class="bgimg" id="home">
+  <button style="position:absolute; right: 3px; " type="button" onclick="show_buttons()">Edit</button>
+
+  
   <div class="grid">
         <div style="background-size:100% 100%;" class="cell" id="Top-Left"> 
           <button style="display:none; position:absolute;" type="button" class="edit"  onclick="edit(0)">Edit</button>  	
@@ -153,7 +175,6 @@ body, html {
           </div>
         </div>
   </div>
-  <button style="position:absolute;" type="button" onclick="show_buttons()">Edit</button>
 </header>
 
 <!-- Add a background color and large text to the whole page -->
@@ -162,7 +183,7 @@ body, html {
 <!-- About Container -->
 <div class="w3-container" id="about">
   <div class="w3-content" style="padding-top: 1%; max-width:700px; text-align: center; font-style: italic;">
-    <textarea class="textarea" id="messageBoxInput" style="display: none;"></textarea></p>
+    <textarea class="textarea" id="messageBoxInput" style="display: none;" placeholder="Why did yu choose this video?"></textarea></p>
     <p id="messageBox" style="display: block;"></p>
     <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">Video</span></h5>
     <!-- put YT here -->
@@ -188,7 +209,13 @@ let buttonList = document.getElementsByClassName('edit');
 let cellList = document.getElementsByClassName('cell');
 let overlays = document.getElementsByClassName('overlay');
 const messageBoxSelector = document.getElementById('messageBoxInput');
+const themeBoxSelector = document.getElementById('themeBoxInput')
+const nameBoxSelector = document.getElementById('nameBoxInput')
+const nameBox = document.getElementById('nameBox').querySelectorAll('span')[0]
+const themeBox = document.getElementById('themeBox').querySelectorAll('span')[0]
 let selectedBox = 0
+
+
 
 var listOfcellsData = [
     { link: "", videoID: "", thumpnail: "", embed:"", message:""},
@@ -202,6 +229,10 @@ var listOfcellsData = [
     { link: "", videoID: "", thumpnail: "", embed:"", message:""},
     { link: "https://www.youtube.com/watch?v=lqBs1P8afTU", videoID: "lqBs1P8afTU", thumpnail: "https://img.youtube.com/vi/lqBs1P8afTU/mqdefault.jpg", embed:"https://www.youtube.com/embed?v=lqBs1P8afTU"},
 ];
+
+var finalData = [
+    { theme: "", name: "", cellData: listOfcellsData},
+]
 
 
 function show_buttons(){
@@ -229,6 +260,24 @@ Array.prototype.forEach.call(overlays, function(o) {
     } else {
       document.getElementById("messageBoxInput").style.display = 'none'
       document.getElementById("messageBox").style.display = 'block'
+    }
+
+    if (document.getElementById("nameBoxInput").style.display === 'none') {
+    document.getElementById("nameBoxInput").style.display = 'block'
+    document.getElementById("nameBox").style.display = 'none'
+
+    } else {
+      document.getElementById("nameBoxInput").style.display = 'none'
+      document.getElementById("nameBox").style.display = 'block'
+    }
+
+    if (document.getElementById("themeBoxInput").style.display === 'none') {
+    document.getElementById("themeBoxInput").style.display = 'block'
+    document.getElementById("themeBox").style.display = 'none'
+
+    } else {
+      document.getElementById("themeBoxInput").style.display = 'none'
+      document.getElementById("themeBox").style.display = 'block'
     }
 
 }
@@ -272,7 +321,7 @@ function changeVideo(num){
 }
 
 function exportJson(el) {
-  var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(listOfcellsData));
+  var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalData));
   // what to return in order to show download window?
   el.setAttribute("href", "data:"+data);
   el.setAttribute("download", "My3by3.json");    
@@ -282,10 +331,21 @@ const fileSelector = document.getElementById('file-selector');
   fileSelector.addEventListener('change', (event) => {
     const fileList = event.target.files;
       new Response(fileList[0]).json().then(json => {
-        listOfcellsData = json;
+        console.log(json)
+
+        if(json.length > 1){
+          listOfcellsData = json;
+        }else{
+          listOfcellsData = json[0].cellData;
+          finalData[0].name = json[0].name;
+          finalData[0].theme = json[0].theme;
+          themeBox.textContent = finalData[0].theme;
+          nameBox.textContent = finalData[0].name;
+        }
         for (let i = 0; i < listOfcellsData.length; i++) {
-        cellList[i].style.backgroundImage = "url("+listOfcellsData[i].thumpnail+")";
-      }
+          cellList[i].style.backgroundImage = "url("+listOfcellsData[i].thumpnail+")";
+        }
+
         console.log(json);
       }, err => {
         // not json
@@ -295,6 +355,18 @@ const fileSelector = document.getElementById('file-selector');
   messageBoxSelector.addEventListener('change', (event) => {
     console.log(messageBoxSelector.value)
     listOfcellsData[selectedBox].message = messageBoxSelector.value
+  });
+
+  themeBoxSelector.addEventListener('change', (event) => {
+    console.log(themeBoxSelector.value)
+    finalData[0].theme = themeBoxSelector.value
+    themeBox.textContent = themeBoxSelector.value
+  });
+
+  nameBoxSelector.addEventListener('change', (event) => {
+    console.log(nameBoxSelector.value)
+    finalData[0].name = nameBoxSelector.value
+    nameBox.textContent = nameBoxSelector.value
   });
 
 
