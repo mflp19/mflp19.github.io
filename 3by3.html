@@ -321,7 +321,7 @@ function changeVideo(num){
 }
 
 function exportJson(el) {
-  finalData.cellData = listOfcellsData;
+  finalData[0].cellData = listOfcellsData;
   var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalData));
   // what to return in order to show download window?
   el.setAttribute("href", "data:"+data);
