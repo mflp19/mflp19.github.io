@@ -321,13 +321,15 @@ function changeVideo(num){
 }
 
 function exportJson(el) {
+  finalData.cellData = listOfcellsData;
   var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalData));
   // what to return in order to show download window?
   el.setAttribute("href", "data:"+data);
-  el.setAttribute("download", "My3by3.json");    
+  el.setAttribute("download", "My3by3.json");
 }
 
 const fileSelector = document.getElementById('file-selector');
+
   fileSelector.addEventListener('change', (event) => {
     const fileList = event.target.files;
       new Response(fileList[0]).json().then(json => {
